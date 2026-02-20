@@ -1,5 +1,5 @@
 /**
- * TAROT ONLINE - JAVASCRIPT
+ * TAROT ONLINE - JAVASCRIPT (GitHub Pages + WebApp simplificado)
  * Funcionalidades: Modal de consulta, validação em 2 etapas, interações
  */
 
@@ -18,7 +18,6 @@ const step2 = document.getElementById('step2');
 function openModal() {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-
     const modalContent = modal.querySelector('.modal-content');
     if (modalContent) modalContent.style.animation = 'slideUp 0.4s ease-out';
 }
@@ -27,8 +26,6 @@ function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
     if (consultForm) consultForm.reset();
-
-    // Sempre volta para etapa 1 ao fechar
     if (step1 && step2) {
         step1.style.display = 'block';
         step2.style.display = 'none';
@@ -37,41 +34,22 @@ function closeModal() {
 
 function showSuccessMessage() {
     if (!successMessage) return;
-
     successMessage.classList.add('show');
-
-    setTimeout(() => {
-        successMessage.classList.remove('show');
-    }, 4000);
+    setTimeout(() => successMessage.classList.remove('show'), 4000);
 }
 
 // ========== EVENT LISTENERS - MODAL ==========
-consultBtns.forEach(btn => {
-    btn.addEventListener('click', openModal);
-});
-
+consultBtns.forEach(btn => btn.addEventListener('click', openModal));
 if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
-
 if (modal) {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 }
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
-    }
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
 
 // ========== VALIDAÇÕES ==========
 function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
-
 function isValidAge(age) {
     const ageNum = parseInt(age);
     return ageNum >= 18 && ageNum <= 120;
@@ -86,7 +64,6 @@ if (nextStepBtn) {
         const objective = document.getElementById('objective').value;
 
         let errors = [];
-
         if (!name || name.length < 3) errors.push('Nome deve ter pelo menos 3 caracteres');
         if (!isValidAge(age)) errors.push('Idade deve estar entre 18 e 120 anos');
         if (!isValidEmail(email)) errors.push('Email inválido');
@@ -130,32 +107,29 @@ if (consultForm) {
     });
 }
 
-// ========== PROCESSAMENTO ==========
-function processConsultation(data) {
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxW3jETiLdKqS0ya54-JC3mDk9bMfRb5HVdi899hq0_5_RyUQOuzIxxhS3SffOq7qNztg/exec";
+// ========== PROCESSAMENTO (async/await + GitHub Pages) ==========
+async function processConsultation(data) {
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxsC4OUdJ1h5BVrBTqYNr_7frggbI0Ua67u224lnXY3T_bM61WSMqwwncDAE0g2bnOZ/exec?action=create-payment";
 
-    fetch(WEBAPP_URL, {
-        method: "POST",
-       body: JSON.stringify({
-  name: data.name,
-  age: data.age,
-  email: data.email,
-  objective: data.objective,
-  details: data.details
-})
-    .then(res => res.json())
-    .then(res => {
+    try {
+        const response = await fetch(WEBAPP_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const res = await response.json();
+
         if (res.init_point) {
-            window.location.href = res.init_point; // redireciona para pagamento
+            window.location.href = res.init_point; // redireciona para checkout do Mercado Pago
         } else {
             console.error("Erro ao gerar pagamento:", res);
             alert("Erro ao gerar pagamento. Verifique os logs.");
         }
-    })
-    .catch(error => {
-        console.error("Erro ao conectar com o servidor:", error);
+    } catch (err) {
+        console.error("Erro ao conectar com o servidor:", err);
         alert("Erro ao conectar com o servidor.");
-    });
+    }
 }
 
 // ========== EFEITOS ==========
@@ -163,7 +137,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
         if (href === '#' || href === '#consultModal') return;
-
         e.preventDefault();
         const target = document.querySelector(href);
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -171,7 +144,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
-const observer = new IntersectionObserver((entries) => {
+const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.style.opacity = '1';
@@ -187,28 +160,18 @@ document.querySelectorAll('.feature, .service-card').forEach(el => {
     observer.observe(el);
 });
 
-const inputs = document.querySelectorAll('input, select, textarea');
-inputs.forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.style.transform = 'scale(1.02)';
-    });
-    input.addEventListener('blur', function() {
-        this.parentElement.style.transform = 'scale(1)';
-    });
+document.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('focus', () => { input.parentElement.style.transform = 'scale(1.02)'; });
+    input.addEventListener('blur', () => { input.parentElement.style.transform = 'scale(1)'; });
 });
 
 // ========== INICIALIZAÇÃO ==========
 function init() {
     console.log('Tarot Online - Site inicializado');
-
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.5s ease-out';
-
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
+    setTimeout(() => document.body.style.opacity = '1', 100);
 }
-
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -218,20 +181,16 @@ if (document.readyState === 'loading') {
 // ========== UTILITÁRIOS ==========
 function formatDate(date) {
     return new Date(date).toLocaleDateString('pt-BR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        year: 'numeric', month: 'long', day: 'numeric'
     });
 }
 
 function debugLog(message, data = null) {
-    if (data) {
-        console.log(`[DEBUG] ${message}:`, data);
-    } else {
-        console.log(`[DEBUG] ${message}`);
-    }
+    if (data) console.log(`[DEBUG] ${message}:`, data);
+    else console.log(`[DEBUG] ${message}`);
 }
 
+// ========== EXPORT ==========
 window.tarotOnline = {
     openModal,
     closeModal,
