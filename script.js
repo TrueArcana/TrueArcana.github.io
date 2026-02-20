@@ -138,11 +138,31 @@ consultForm.addEventListener('submit', (e) => {
 
 // ========== PROCESSAMENTO ==========
 function processConsultation(data) {
-    console.log('Consulta enviada:', data);
 
-    closeModal();
-    showSuccessMessage();
-    consultForm.reset();
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwCKNZFDWj36N9_DaBKmT8WwhG2P_XTRV73wOm9pqGFnNA21nnvov94L4BJF79Hq22eyQ/exec";
+
+    fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+
+        if (result.init_point) {
+            // Redireciona para o Mercado Pago
+            window.location.href = result.init_point;
+        } else {
+            alert("Erro ao gerar pagamento.");
+        }
+
+    })
+    .catch(error => {
+        console.error("Erro:", error);
+        alert("Erro ao conectar com o servidor.");
+    });
 }
 
 // ========== EFEITOS ==========
