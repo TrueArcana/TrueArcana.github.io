@@ -141,13 +141,14 @@ function processConsultation(data) {
 
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwHJZDylyJ-kqHiC1G8oBxrOCF2BYBNa6Qq-BEhiJ_IkrxX1NDiBeCAYqJqrV12enFZFA/exec";
 
-    fetch(WEBAPP_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
+   fetch(WEBAPP_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data),
+  mode: "cors"
+})
     .then(response => response.json())
     .then(result => {
 
