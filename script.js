@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Redireciona para o Web App do Mercado Pago
-        const WEBAPP_URL = "https://script.google.com/macros/s/SEU_WEBAPP_ID/exec"; // <== TROQUE pelo seu Web App ID
+        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwN3FzTUHlNKEc5mlGUmDMV8S0ot-IZklUTed-CqpO61aZZxbuVxx7ObaN1bRssIOPyNw/exec"; // <== TROQUE pelo seu Web App ID
         window.location.href = WEBAPP_URL + "?action=create-payment";
     });
 
