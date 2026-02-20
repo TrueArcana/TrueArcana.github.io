@@ -136,9 +136,13 @@ function processConsultation(data) {
 
     fetch(WEBAPP_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    })
+       body: JSON.stringify({
+  name: data.name,
+  age: data.age,
+  email: data.email,
+  objective: data.objective,
+  details: data.details
+})
     .then(res => res.json())
     .then(res => {
         if (res.init_point) {
