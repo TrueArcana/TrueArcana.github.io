@@ -139,7 +139,7 @@ consultForm.addEventListener('submit', (e) => {
 // ========== PROCESSAMENTO ==========
 function processConsultation(data) {
 
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz2Po3fDWppdUpiXmX60N2A2gDPHHEDLyJKB-Ye8jY4mnp2sB-ppGlPvJoWil9pu0ERiA/exec";
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyndyi8bGIz-9dVfe8h81VEqm_W_bV01-24mctsJAKR3p_DaLWjprA5hD8a46_jICaTkg/exec";
 
     fetch(WEBAPP_URL, {
         method: "POST",
