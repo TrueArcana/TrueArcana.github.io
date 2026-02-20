@@ -1,5 +1,5 @@
 /**
- * TAROT ONLINE - JAVASCRIPT (GitHub Pages + WebApp simplificado)
+ * TAROT ONLINE - JAVASCRIPT
  * Funcionalidades: Modal de consulta, validação em 2 etapas, interações
  */
 
@@ -103,7 +103,7 @@ if (consultForm) {
 
 // ========== PROCESSAMENTO ==========
 function processConsultation(data) {
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxsC4OUdJ1h5BVrBTqYNr_7frggbI0Ua67u224lnXY3T_bM61WSMqwwncDAE0g2bnOZ/exec?action=create-payment";
+    const WEBAPP_URL = "https://script.google.com/macros/s/SEU_WEBAPP_ID/exec?action=create-payment";
 
     fetch(WEBAPP_URL, {
         method: "POST",
@@ -174,9 +174,7 @@ if (document.readyState === 'loading') {
 
 // ========== UTILITÁRIOS ==========
 function formatDate(date) {
-    return new Date(date).toLocaleDateString('pt-BR', {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
+    return new Date(date).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function debugLog(message, data = null) {
@@ -184,11 +182,4 @@ function debugLog(message, data = null) {
     else console.log(`[DEBUG] ${message}`);
 }
 
-window.tarotOnline = {
-    openModal,
-    closeModal,
-    showSuccessMessage,
-    processConsultation,
-    formatDate,
-    debugLog
-};
+window.tarotOnline = { openModal, closeModal, showSuccessMessage, processConsultation, formatDate, debugLog };
