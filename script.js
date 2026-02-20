@@ -35,7 +35,7 @@ function closeModal() {
 function showSuccessMessage() {
     if (!successMessage) return;
     successMessage.classList.add('show');
-    setTimeout(() => successMessage.classList.remove('show'), 4000);
+    setTimeout(() => { successMessage.classList.remove('show'); }, 4000);
 }
 
 // ========== EVENT LISTENERS - MODAL ==========
@@ -97,39 +97,32 @@ if (consultForm) {
             return;
         }
 
-        processConsultation({
-            name,
-            age,
-            email,
-            objective,
-            details
-        });
+        processConsultation({ name, age, email, objective, details });
     });
 }
 
-// ========== PROCESSAMENTO (async/await + GitHub Pages) ==========
-async function processConsultation(data) {
+// ========== PROCESSAMENTO ==========
+function processConsultation(data) {
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxsC4OUdJ1h5BVrBTqYNr_7frggbI0Ua67u224lnXY3T_bM61WSMqwwncDAE0g2bnOZ/exec?action=create-payment";
 
-    try {
-        const response = await fetch(WEBAPP_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-
-        const res = await response.json();
-
+    fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
         if (res.init_point) {
-            window.location.href = res.init_point; // redireciona para checkout do Mercado Pago
+            window.location.href = res.init_point; // redireciona para pagamento
         } else {
             console.error("Erro ao gerar pagamento:", res);
             alert("Erro ao gerar pagamento. Verifique os logs.");
         }
-    } catch (err) {
-        console.error("Erro ao conectar com o servidor:", err);
+    })
+    .catch(error => {
+        console.error("Erro ao conectar com o servidor:", error);
         alert("Erro ao conectar com o servidor.");
-    }
+    });
 }
 
 // ========== EFEITOS ==========
@@ -144,7 +137,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
-const observer = new IntersectionObserver(entries => {
+const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.style.opacity = '1';
@@ -160,9 +153,10 @@ document.querySelectorAll('.feature, .service-card').forEach(el => {
     observer.observe(el);
 });
 
-document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('focus', () => { input.parentElement.style.transform = 'scale(1.02)'; });
-    input.addEventListener('blur', () => { input.parentElement.style.transform = 'scale(1)'; });
+const inputs = document.querySelectorAll('input, select, textarea');
+inputs.forEach(input => {
+    input.addEventListener('focus', function() { this.parentElement.style.transform = 'scale(1.02)'; });
+    input.addEventListener('blur', function() { this.parentElement.style.transform = 'scale(1)'; });
 });
 
 // ========== INICIALIZAÇÃO ==========
@@ -170,7 +164,7 @@ function init() {
     console.log('Tarot Online - Site inicializado');
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.5s ease-out';
-    setTimeout(() => document.body.style.opacity = '1', 100);
+    setTimeout(() => { document.body.style.opacity = '1'; }, 100);
 }
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
@@ -190,7 +184,6 @@ function debugLog(message, data = null) {
     else console.log(`[DEBUG] ${message}`);
 }
 
-// ========== EXPORT ==========
 window.tarotOnline = {
     openModal,
     closeModal,
