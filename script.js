@@ -15,19 +15,18 @@ const step1 = document.getElementById('step1');
 const step2 = document.getElementById('step2');
 
 // ========== FUNÇÕES DE MODAL ==========
-
 function openModal() {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
     const modalContent = modal.querySelector('.modal-content');
-    modalContent.style.animation = 'slideUp 0.4s ease-out';
+    if (modalContent) modalContent.style.animation = 'slideUp 0.4s ease-out';
 }
 
 function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
-    consultForm.reset();
+    if (consultForm) consultForm.reset();
 
     // Sempre volta para etapa 1 ao fechar
     if (step1 && step2) {
@@ -37,6 +36,8 @@ function closeModal() {
 }
 
 function showSuccessMessage() {
+    if (!successMessage) return;
+
     successMessage.classList.add('show');
 
     setTimeout(() => {
@@ -45,18 +46,19 @@ function showSuccessMessage() {
 }
 
 // ========== EVENT LISTENERS - MODAL ==========
-
 consultBtns.forEach(btn => {
     btn.addEventListener('click', openModal);
 });
 
-closeModalBtn.addEventListener('click', closeModal);
+if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
 
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        closeModal();
-    }
-});
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+}
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.classList.contains('active')) {
@@ -78,7 +80,6 @@ function isValidAge(age) {
 // ========== ETAPA 1 -> ETAPA 2 ==========
 if (nextStepBtn) {
     nextStepBtn.addEventListener('click', () => {
-
         const name = document.getElementById('name').value.trim();
         const age = document.getElementById('age').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -86,106 +87,86 @@ if (nextStepBtn) {
 
         let errors = [];
 
-        if (!name || name.length < 3) {
-            errors.push('Nome deve ter pelo menos 3 caracteres');
-        }
-
-        if (!isValidAge(age)) {
-            errors.push('Idade deve estar entre 18 e 120 anos');
-        }
-
-        if (!isValidEmail(email)) {
-            errors.push('Email inválido');
-        }
-
-        if (!objective) {
-            errors.push('Selecione um objetivo');
-        }
+        if (!name || name.length < 3) errors.push('Nome deve ter pelo menos 3 caracteres');
+        if (!isValidAge(age)) errors.push('Idade deve estar entre 18 e 120 anos');
+        if (!isValidEmail(email)) errors.push('Email inválido');
+        if (!objective) errors.push('Selecione um objetivo');
 
         if (errors.length > 0) {
             alert('Erros no formulário:\n\n' + errors.join('\n'));
             return;
         }
 
-        step1.style.display = 'none';
-        step2.style.display = 'block';
+        if (step1 && step2) {
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+        }
     });
 }
 
 // ========== ENVIO FINAL ==========
-consultForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+if (consultForm) {
+    consultForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    const name = document.getElementById('name').value.trim();
-    const age = document.getElementById('age').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const objective = document.getElementById('objective').value;
-    const details = document.getElementById('details').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const age = document.getElementById('age').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const objective = document.getElementById('objective').value;
+        const details = document.getElementById('details').value.trim();
 
-    if (!details || details.length < 10) {
-        alert('Por favor, descreva sua situação com mais detalhes.');
-        return;
-    }
+        if (!details || details.length < 10) {
+            alert('Por favor, descreva sua situação com mais detalhes.');
+            return;
+        }
 
-    processConsultation({
-        name,
-        age,
-        email,
-        objective,
-        details
+        processConsultation({
+            name,
+            age,
+            email,
+            objective,
+            details
+        });
     });
-});
+}
 
 // ========== PROCESSAMENTO ==========
 function processConsultation(data) {
-
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxW3jETiLdKqS0ya54-JC3mDk9bMfRb5HVdi899hq0_5_RyUQOuzIxxhS3SffOq7qNztg/exec";
 
-  fetch(WEBAPP_URL, {
-  method: "POST",
-  body: JSON.stringify({
-    name: nome,
-    age: idade,
-    email: email,
-    objective: objetivo,
-    details: detalhes
-  })
-})
-.then(res => res.json())
-.then(res => {
-  if (res.init_point) {
-    window.location.href = res.init_point; // redireciona para pagamento
-  } else {
-    alert("Erro ao gerar pagamento");
-  }
-});
+    fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.init_point) {
+            window.location.href = res.init_point; // redireciona para pagamento
+        } else {
+            console.error("Erro ao gerar pagamento:", res);
+            alert("Erro ao gerar pagamento. Verifique os logs.");
+        }
+    })
+    .catch(error => {
+        console.error("Erro ao conectar com o servidor:", error);
+        alert("Erro ao conectar com o servidor.");
+    });
+}
 
 // ========== EFEITOS ==========
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-
-        if (href === '#' || href === '#consultModal') {
-            return;
-        }
+        if (href === '#' || href === '#consultModal') return;
 
         e.preventDefault();
         const target = document.querySelector(href);
-
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -203,12 +184,10 @@ document.querySelectorAll('.feature, .service-card').forEach(el => {
 });
 
 const inputs = document.querySelectorAll('input, select, textarea');
-
 inputs.forEach(input => {
     input.addEventListener('focus', function() {
         this.parentElement.style.transform = 'scale(1.02)';
     });
-
     input.addEventListener('blur', function() {
         this.parentElement.style.transform = 'scale(1)';
     });
