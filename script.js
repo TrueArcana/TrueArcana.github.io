@@ -139,28 +139,26 @@ consultForm.addEventListener('submit', (e) => {
 // ========== PROCESSAMENTO ==========
 function processConsultation(data) {
 
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxssE-CSWXoqIOi6RE3-1EFcwkGiLXouigc-IQ41Sce3KccExXMA-eIz70tydU3d9hwMA/exec";
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxW3jETiLdKqS0ya54-JC3mDk9bMfRb5HVdi899hq0_5_RyUQOuzIxxhS3SffOq7qNztg/exec";
 
-   fetch(WEBAPP_URL, {
-    method: "POST",
-    body: JSON.stringify(data)
+  fetch(WEBAPP_URL, {
+  method: "POST",
+  body: JSON.stringify({
+    name: nome,
+    age: idade,
+    email: email,
+    objective: objetivo,
+    details: detalhes
+  })
 })
-    .then(response => response.json())
-    .then(result => {
-
-        if (result.init_point) {
-            // Redireciona para o Mercado Pago
-            window.location.href = result.init_point;
-        } else {
-            alert("Erro ao gerar pagamento.");
-        }
-
-    })
-    .catch(error => {
-        console.error("Erro:", error);
-        alert("Erro ao conectar com o servidor.");
-    });
-}
+.then(res => res.json())
+.then(res => {
+  if (res.init_point) {
+    window.location.href = res.init_point; // redireciona para pagamento
+  } else {
+    alert("Erro ao gerar pagamento");
+  }
+});
 
 // ========== EFEITOS ==========
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
