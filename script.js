@@ -1,6 +1,6 @@
 /**
  * TAROT ONLINE - JAVASCRIPT
- * Funcionalidades: Modal de consulta, validação em 2 etapas, interações
+ * Funcionalidades: Modal de consulta, validação em 2 etapas, redirecionamento para pagamento
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========== FUNÇÕES DE MODAL ==========
     function openModal() {
         if (!modal) return;
-        modal.classList.add('active');
+        modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
         if (!modal) return;
-        modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.style.overflow = 'auto';
         if (consultForm) consultForm.reset();
         if (step1 && step2) {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
     });
 
     // ========== VALIDAÇÕES ==========
@@ -92,30 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const payload = { name, age, email, objective, details };
-            sendToWebApp(payload);
-        });
-    }
-
-    // ========== FUNÇÃO DE ENVIO ==========
-    function sendToWebApp(data) {
-        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwN3FzTUHlNKEc5mlGUmDMV8S0ot-IZklUTed-CqpO61aZZxbuVxx7ObaN1bRssIOPyNw/exec";
-
-        document.getElementById("consultBtn").onclick = () => {
-  window.location.href = WEBAPP_URL + "?action=create-payment";
-};
-        .then(res => res.json())
-        .then(res => {
-            if (res.init_point) {
-                window.location.href = res.init_point; // redireciona para pagamento
-            } else {
-                console.error("Erro ao gerar pagamento:", res);
-                alert("Erro ao gerar pagamento. Verifique os logs.");
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao conectar com o servidor:", err);
-            alert("Erro ao conectar com o servidor.");
+            // Redireciona para o Web App do Mercado Pago
+            const WEBAPP_URL = "https://script.google.com/macros/s/SEU_WEBAPP_ID/exec"; // substitua pelo seu Web App ID
+            window.location.href = WEBAPP_URL + "?action=create-payment";
         });
     }
 
