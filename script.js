@@ -99,13 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== FUNÇÃO DE ENVIO ==========
     function sendToWebApp(data) {
-        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxsC4OUdJ1h5BVrBTqYNr_7frggbI0Ua67u224lnXY3T_bM61WSMqwwncDAE0g2bnOZ/exec?action=create-payment";
+        const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwN3FzTUHlNKEc5mlGUmDMV8S0ot-IZklUTed-CqpO61aZZxbuVxx7ObaN1bRssIOPyNw/exec";
 
-        fetch(WEBAPP_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        })
+        document.getElementById("consultBtn").onclick = () => {
+  window.location.href = WEBAPP_URL + "?action=create-payment";
+};
         .then(res => res.json())
         .then(res => {
             if (res.init_point) {
